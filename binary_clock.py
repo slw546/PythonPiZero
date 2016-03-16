@@ -14,9 +14,15 @@ class BinaryClock(Screen):
     def up(self):
         return "IpAddress"
 
+    def press(self):
+        print "press"
+        self.pressed = not self.pressed
+
     def __init__(self, hat):
         self.hat = hat
         self.rc = RoomConditions(hat)
+        self.clock_off = False
+        self.pressed = False
 
     def setPixels(self, startX, startY, val):
         x = startX
@@ -41,9 +47,13 @@ class BinaryClock(Screen):
         temp_printed = False
         while going.isSet():
             now = datetime.datetime.now()
-            #if now.hour >= 22:
-            #    time.sleep(0.5)
-            #    continue
+            clock_off = False
+            if (now.hour >= 22) or (now.hour < 9):
+                clock_off = True
+            if clock_off:
+                if not self.pressed:
+                    self.hat.clear()
+                    continue
             if (now.minute % 10) == 0:
                 if not temp_printed:
                     self.rc.show(going)
