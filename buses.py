@@ -22,9 +22,14 @@ class Buses(Screen):
         self.current_44 = None
         self.current_66 = None
         self.ls = LoadingScreen(self.hat)
-        self.ready = threading.Event()
-        self.ready.clear()
-        self.loading_screen = threading.Thread(ls.run, args=self.ready)
+        self.notReady = threading.Event()
+        self.newThread()
+
+    def newThread(self):
+        self.loading_screen = threading.Thread(target=self.ls.run, args=(self.notReady,))
+
+    def left(self):
+        return "BinaryClock"
 
     def check_request(self):
         if (self.requests+1) > self.max_requests:
@@ -61,13 +66,10 @@ class Buses(Screen):
             self.inc_requests()
 
     def current_data_valid(self):
-        window = self.last_request + datetime.timedelta(minutes=10)
+        window = self.last_request + datetime.timedelta(minutes=5)
         now = datetime.datetime.now()
         if window > now:
-            print True
             return True
-        else:
-            print False
         return False
 
     def show(self, data, bus):
@@ -78,19 +80,24 @@ class Buses(Screen):
         now = datetime.datetime.now()
         if now.hour != hr:
             mins += 60
-        time_til_next = str(mins - now.minute)
-        self.hat.show_message(bus + ":" + time_til_next + "mins", scroll_speed=0.1, text_colour=[100,0,0]) 
+        time_til_next = mins - now.minute
+        if time_til_next == 1:
+            nxt = str(time_til_next)+"min"
+        else:
+            nxt = str(time_til_next)+"mins"
+        self.hat.show_message(bus + ":" + nxt, scroll_speed=0.1, text_colour=[100,0,0]) 
 
     def run(self, going):
         once = False
         while going.isSet():
             if not self.current_data_valid():
-                self.ready.clear()
-                self.loading-screen.start()
+                self.newThread()
+                self.notReady.set()
+                self.loading_screen.start()
                 self.request_66()
                 self.request_44()
-                time.sleep(5)
-                self.ready.set()
+                self.notReady.clear()
+                self.loading_screen.join()
             self.show(self.current_66, "66")
             if not going.isSet():
                 continue
