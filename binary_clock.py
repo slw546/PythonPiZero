@@ -7,6 +7,9 @@ from room_conditions import RoomConditions
 class BinaryClock(Screen):
     red = [100,0,0]
     off = [0,0,0]
+
+    def right(self):
+        return "Buses"
    
     def down(self):
         return "RoomConditions"
@@ -15,7 +18,6 @@ class BinaryClock(Screen):
         return "IpAddress"
 
     def press(self):
-        print "press"
         self.pressed = not self.pressed
 
     def __init__(self, hat):
@@ -30,8 +32,10 @@ class BinaryClock(Screen):
         for char in val:
             if char is "1":
                 self.hat.set_pixel(x,y,self.red)
+                self.hat.set_pixel(x-1,y,self.red)
             else:
                 self.hat.set_pixel(x,y,self.off)
+                self.hat.set_pixel(x-1,y,self.off)
             y = y+1
 
     def tick(self, now):
@@ -40,8 +44,8 @@ class BinaryClock(Screen):
         second = now.second
         secs = "{0:06b}".format(second)
         self.setPixels(1,1,hour)
-        self.setPixels(3,1,mins)
-        self.setPixels(5,1,secs)
+        self.setPixels(4,1,mins)
+        self.setPixels(7,1,secs)
 
     def run(self, going):
         temp_printed = False
