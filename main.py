@@ -3,7 +3,7 @@ from binary_clock import BinaryClock
 from room_conditions import RoomConditions
 from ip_address import IpAddress
 from buses import Buses
-from loading import loadingScreen
+from loading import LoadingScreen
 
 import threading
 import time
@@ -23,7 +23,7 @@ class Main:
         self.room_conditions = RoomConditions(self.hat)
         self.ip_addr = IpAddress(self.hat)
         self.buses = Buses(self.hat)
-        self.loading = loadingScreen(self.hat)
+        self.loading = LoadingScreen(self.hat)
         for d in devices:
             if d.name == "Raspberry Pi Sense HAT Joystick":
                 self.stick = d
@@ -80,7 +80,7 @@ class Main:
         self.screen_thread.start()
 
     def run(self):
-        self.move_to_screen(self.getScreen("Buses"))
+        self.move_to_screen(self.getScreen("BinaryClock"))
         self.start_screen()
         main_going = True
         try:
