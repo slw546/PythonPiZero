@@ -25,7 +25,7 @@ class IpAddress(Screen):
         try:
             self.hat.show_message(self.getWan(), scroll_speed=0.1, text_colour=[100,0,0])
         except Exception as e:
-            self.hat.show_message("No IP", scroll_speed=0.25, text_colour=[100,0,0])
+            self.hat.show_message("No IP", scroll_speed=0.1, text_colour=[100,0,0])
 
     def run(self, going):
         while going.isSet():
