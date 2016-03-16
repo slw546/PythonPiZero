@@ -1,6 +1,6 @@
 import time
 
-class loadingScreen:
+class LoadingScreen:
     red = [100,0,0]
     blue = [0,100,0]
     green = [0,0,100]
