@@ -2,6 +2,8 @@ from sense_hat import SenseHat
 from binary_clock import BinaryClock
 from room_conditions import RoomConditions
 from ip_address import IpAddress
+from buses import Buses
+from loading import loadingScreen
 
 import threading
 import time
@@ -17,6 +19,11 @@ class Main:
         self.stick = None
         self.going = threading.Event()
         self.screen_thread = None
+        self.binary_clock = BinaryClock(self.hat)
+        self.room_conditions = RoomConditions(self.hat)
+        self.ip_addr = IpAddress(self.hat)
+        self.buses = Buses(self.hat)
+        self.loading = loadingScreen(self.hat)
         for d in devices:
             if d.name == "Raspberry Pi Sense HAT Joystick":
                 self.stick = d
@@ -25,27 +32,34 @@ class Main:
 
     def getScreen(self, code):
         if code == "BinaryClock":
-            return BinaryClock(self.hat)
+            return self.binary_clock
         elif code == "RoomConditions":
-            return RoomConditions(self.hat)
+            return self.room_conditions
         elif code == "IpAddress":
-            return IpAddress(self.hat)
+            return self.ip_addr
+        elif code == "Buses":
+            return self.buses
+        elif code == "Loading":
+            return self.loading
+        return self.binary_clock
 
     def handle_event(self, event):
         code = event.code
         scr = None
         if code == ecodes.KEY_DOWN:
-            scr = self.screen.down()
             print "d"
+            scr = self.screen.down()
         elif code == ecodes.KEY_UP:
-            scr = self.screen.up()
             print "u"
+            scr = self.screen.up()
         elif code == ecodes.KEY_LEFT:
-            scr = self.screen.left()
             print "l"
+            scr = self.screen.left()
         elif code == ecodes.KEY_RIGHT:
-            scr = self.screen.right()
             print "r"
+            scr = self.screen.right()
+        elif code == ecodes.KEY_ENTER:
+            self.screen.press()
         if scr:
             # Change to new screen
             scr = self.getScreen(scr)
@@ -56,24 +70,18 @@ class Main:
         #Close old screen
         self.going.clear()
         if self.screen_thread:
-            print "1"
             self.screen_thread.join()
-        print "2"
 
         self.screen = newScreen
         self.screen_thread = threading.Thread(target=self.screen.run, args=(self.going,))
-        print "3"
 
     def start_screen(self):
         self.going.set()
         self.screen_thread.start()
 
     def run(self):
-        print "start"
-        self.move_to_screen(self.getScreen("BinaryClock"))
-        print "moved"
+        self.move_to_screen(self.getScreen("Buses"))
         self.start_screen()
-        print "started"
         main_going = True
         try:
             while main_going:

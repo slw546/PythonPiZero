@@ -14,5 +14,8 @@ class Screen:
     def right(self):
         return "None"
 
+    def press(self):
+        pass
+
     def run(self):
         pass
