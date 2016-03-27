@@ -48,7 +48,7 @@ class Buses(Screen):
 
     def get_json(self, addr):
         self.last_request = datetime.datetime.now()
-        ret_str = requests.request('GET', addr)
+        ret_str = requests.request('GET', addr, timeout=5)
         return ret_str.json()
 
     def request_66(self):
@@ -87,20 +87,29 @@ class Buses(Screen):
             nxt = str(time_til_next)+"mins"
         self.hat.show_message(bus + ":" + nxt, scroll_speed=0.1, text_colour=[100,0,0]) 
 
+    def load(self):
+        self.newThread()
+        self.notReady.set()
+        self.loading_screen.start()
+        self.request_66()
+        self.request_44()
+        self.notReady.clear()
+        self.loading_screen.join()
+
     def run(self, going):
         once = False
         while going.isSet():
             if not self.current_data_valid():
-                self.newThread()
-                self.notReady.set()
-                self.loading_screen.start()
-                self.request_66()
-                self.request_44()
-                self.notReady.clear()
-                self.loading_screen.join()
-            self.show(self.current_66, "66")
-            if not going.isSet():
-                continue
-            self.show(self.current_44, "44")
+                try:
+                    self.load()
+                except Exception as e:
+                    self.hat.show_message(e, scroll_speed=0.1, text_colour=[100,0,0]) 
+            try:
+                self.show(self.current_66, "66")
+                if not going.isSet():
+                    continue
+                self.show(self.current_44, "44")
+            except Exception as e:
+                self.hat.show_message(e, scroll_speed=0.1, text_colour=[100,0,0]) 
             if going.isSet():
                 time.sleep(1)

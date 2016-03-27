@@ -8,6 +8,8 @@ class IpAddress(Screen):
     def __init__(self, hat):
         self.hat = hat
 
+    def up(self):
+        return "Diagnostics"
     def down(self):
         return "BinaryClock"
     

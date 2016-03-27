@@ -1,3 +1,5 @@
+import time
+
 class Screen:
     def __init__(self):
         pass
@@ -19,3 +21,14 @@ class Screen:
 
     def run(self):
         pass
+
+    def delay(self, t, going):
+        if t is 0:
+            return
+        else:
+            if going.isSet():
+                time.sleep(1)
+                self.delay(t-1, going)
+            else:
+                return
+

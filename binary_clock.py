@@ -26,6 +26,9 @@ class BinaryClock(Screen):
         self.clock_off = False
         self.pressed = False
 
+    def setRC(self, rc):
+        self.rc = rc
+
     def setPixels(self, startX, startY, val):
         x = startX
         y = startY
@@ -60,7 +63,7 @@ class BinaryClock(Screen):
                     continue
             if (now.minute % 10) == 0:
                 if not temp_printed:
-                    self.rc.show(going)
+                    self.rc.printAll(going)
                     now = datetime.datetime.now()
                     temp_printed = True
             else:

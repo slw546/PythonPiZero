@@ -4,6 +4,7 @@ from room_conditions import RoomConditions
 from ip_address import IpAddress
 from buses import Buses
 from loading import LoadingScreen
+from diagnostics import Diagnostics
 
 import threading
 import time
@@ -21,9 +22,11 @@ class Main:
         self.screen_thread = None
         self.binary_clock = BinaryClock(self.hat)
         self.room_conditions = RoomConditions(self.hat)
+        self.binary_clock.setRC(self.room_conditions)
         self.ip_addr = IpAddress(self.hat)
         self.buses = Buses(self.hat)
         self.loading = LoadingScreen(self.hat)
+        self.diagnostics = Diagnostics(self.hat)
         for d in devices:
             if d.name == "Raspberry Pi Sense HAT Joystick":
                 self.stick = d
@@ -41,22 +44,20 @@ class Main:
             return self.buses
         elif code == "Loading":
             return self.loading
+        elif code == "Diagnostics":
+            return self.diagnostics
         return self.binary_clock
 
     def handle_event(self, event):
         code = event.code
         scr = None
         if code == ecodes.KEY_DOWN:
-            print "d"
             scr = self.screen.down()
         elif code == ecodes.KEY_UP:
-            print "u"
             scr = self.screen.up()
         elif code == ecodes.KEY_LEFT:
-            print "l"
             scr = self.screen.left()
         elif code == ecodes.KEY_RIGHT:
-            print "r"
             scr = self.screen.right()
         elif code == ecodes.KEY_ENTER:
             self.screen.press()
@@ -92,8 +93,12 @@ class Main:
                                 self.handle_event(event)
                 time.sleep(1)
         except KeyboardInterrupt:
+            main_going=False
+            print "keyboard interrupt"
             self.going.clear()
-            self.screen_thread.join()
+            print "waiting for thread to clean up"
+            time.sleep(5)
+            print "exit"
         except Exception as e:
             print e
 
