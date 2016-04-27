@@ -5,16 +5,16 @@ class Screen:
         pass
 
     def up(self):
-        return "None"
+        pass
 
     def down(self):
-        return "None"
+        pass
 
     def left(self):
-        return "None"
+        pass
 
     def right(self):
-        return "None"
+        pass
 
     def press(self):
         pass
@@ -23,7 +23,7 @@ class Screen:
         pass
 
     def delay(self, t, going):
-        if t is 0:
+        if t == 0:
             return
         else:
             if going.isSet():

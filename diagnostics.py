@@ -12,7 +12,7 @@ class Diagnostics(Screen):
         self.cpu_usage = psutil.cpu_percent()
 
     def down(self):
-        return "IpAddress"
+        return "Wifi"
     
     def getLocalIp(self):
         return socket.gethostbyname(socket.getfqdn())
@@ -45,11 +45,9 @@ class Diagnostics(Screen):
 
     def run(self, going):
         while going.isSet():
-            self.printCpuUsage()
-            self.delay(2, going)
-            self.printCpuTemp()
-            self.delay(2, going)
-            self.printDiskUsage()
-            self.delay(2, going)
-            self.printWan()
-            self.delay(2, going)
+            func = [self.printCpuUsage, self.printCpuTemp, self.printDiskUsage, self.printWan]
+            for f in func:
+                f()
+                self.delay(2, going)
+                if not going.isSet():
+                    break

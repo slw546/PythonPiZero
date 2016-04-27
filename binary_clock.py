@@ -15,7 +15,7 @@ class BinaryClock(Screen):
         return "RoomConditions"
 
     def up(self):
-        return "IpAddress"
+        return "Wifi"
 
     def press(self):
         self.pressed = not self.pressed
@@ -51,6 +51,7 @@ class BinaryClock(Screen):
         self.setPixels(7,1,secs)
 
     def run(self, going):
+        self.hat.clear()
         temp_printed = False
         while going.isSet():
             now = datetime.datetime.now()
